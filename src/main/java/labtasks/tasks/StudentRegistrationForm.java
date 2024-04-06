@@ -81,7 +81,6 @@ public class StudentRegistrationForm extends Application {
 
         tableView.getColumns().addAll(nameColumn, idColumn, emailColumn, genderColumn, termsColumn);
 
-        // Add components to grid pane
         gridPane.addRow(0, nameLabel, nameField);
         gridPane.addRow(1, idLabel, idField);
         gridPane.addRow(2, emailLabel, emailField);
