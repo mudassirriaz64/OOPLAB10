@@ -9,12 +9,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class StudentRegistrationForm extends Application {
+public class StudentRegistrationForm extends Application
+{
 
     TableView<Student> tableView;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage)
+    {
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
@@ -48,9 +50,11 @@ public class StudentRegistrationForm extends Application {
             String id = idField.getText();
             String email = emailField.getText();
             String gender = "";
-            if (maleRadio.isSelected()) {
+            if (maleRadio.isSelected())
+            {
                 gender = "Male";
-            } else if (femaleRadio.isSelected()) {
+            } else if (femaleRadio.isSelected())
+            {
                 gender = "Female";
             }
             boolean termsAgreed = termsCheckbox.isSelected();
@@ -95,18 +99,21 @@ public class StudentRegistrationForm extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         launch(args);
     }
 
-    public static class Student {
+    public static class Student
+    {
         private String name;
         private String id;
         private String email;
         private String gender;
         private boolean termsAgreed;
 
-        public Student(String name, String id, String email, String gender, boolean termsAgreed) {
+        public Student(String name, String id, String email, String gender, boolean termsAgreed)
+        {
             this.name = name;
             this.id = id;
             this.email = email;
@@ -114,23 +121,28 @@ public class StudentRegistrationForm extends Application {
             this.termsAgreed = termsAgreed;
         }
 
-        public String getName() {
+        public String getName()
+        {
             return name;
         }
 
-        public String getId() {
+        public String getId()
+        {
             return id;
         }
 
-        public String getEmail() {
+        public String getEmail()
+        {
             return email;
         }
 
-        public String getGender() {
+        public String getGender()
+        {
             return gender;
         }
 
-        public boolean isTermsAgreed() {
+        public boolean isTermsAgreed()
+        {
             return termsAgreed;
         }
     }

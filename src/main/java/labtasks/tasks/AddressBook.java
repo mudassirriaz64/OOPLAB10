@@ -9,7 +9,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class AddressBook extends Application {
+public class AddressBook extends Application
+{
 
     TableView<Contact> tableView;
     ObservableList<Contact> contacts;
@@ -23,7 +24,8 @@ public class AddressBook extends Application {
     Button deleteButton;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage)
+    {
         // Initialize contacts list
         contacts = FXCollections.observableArrayList();
 
@@ -73,47 +75,56 @@ public class AddressBook extends Application {
         primaryStage.show();
     }
 
-    private void addContact() {
+    private void addContact()
+    {
         String name = nameField.getText();
         String phoneNumber = phoneNumberField.getText();
         String email = emailField.getText();
 
-        if (!name.isEmpty() && !phoneNumber.isEmpty() && !email.isEmpty()) {
+        if (!name.isEmpty() && !phoneNumber.isEmpty() && !email.isEmpty())
+        {
             Contact contact = new Contact(name, phoneNumber, email);
             contacts.add(contact);
             clearFields();
-        } else {
+        } else
+        {
             showAlert("Error", "Please fill in all fields.");
         }
     }
 
-    private void editContact() {
+    private void editContact()
+    {
         Contact selectedContact = tableView.getSelectionModel().getSelectedItem();
         if (selectedContact != null) {
             String newName = nameField.getText();
             String newPhoneNumber = phoneNumberField.getText();
             String newEmail = emailField.getText();
 
-            if (!newName.isEmpty() && !newPhoneNumber.isEmpty() && !newEmail.isEmpty()) {
+            if (!newName.isEmpty() && !newPhoneNumber.isEmpty() && !newEmail.isEmpty())
+            {
                 selectedContact.setName(newName);
                 selectedContact.setPhoneNumber(newPhoneNumber);
                 selectedContact.setEmail(newEmail);
                 tableView.refresh();
                 clearFields();
-            } else {
+            } else
+            {
                 showAlert("Error", "Please fill in all fields.");
             }
-        } else {
+        } else
+        {
             showAlert("Error", "No contact selected.");
         }
     }
 
-    private void deleteContact() {
+    private void deleteContact()
+    {
         Contact selectedContact = tableView.getSelectionModel().getSelectedItem();
         if (selectedContact != null) {
             contacts.remove(selectedContact);
             clearFields();
-        } else {
+        } else
+        {
             showAlert("Error", "No contact selected.");
         }
     }
@@ -124,7 +135,8 @@ public class AddressBook extends Application {
         emailField.clear();
     }
 
-    private void showAlert(String title, String message) {
+    private void showAlert(String title, String message)
+    {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -132,42 +144,51 @@ public class AddressBook extends Application {
         alert.showAndWait();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         launch(args);
     }
 
-    public static class Contact {
+    public static class Contact
+    {
         private String name;
         private String phoneNumber;
         private String email;
 
-        public Contact(String name, String phoneNumber, String email) {
+        public Contact(String name, String phoneNumber, String email)
+        {
             this.name = name;
             this.phoneNumber = phoneNumber;
             this.email = email;
         }
 
-        public String getName() {
+        public String getName()
+        {
             return name;
         }
 
-        public void setName(String name) {
+        public void setName(String name)
+        {
             this.name = name;
         }
 
-        public String getPhoneNumber() {
+        public String getPhoneNumber()
+        {
             return phoneNumber;
         }
 
-        public void setPhoneNumber(String phoneNumber) {
+        public void setPhoneNumber(String phoneNumber)
+        {
             this.phoneNumber = phoneNumber;
         }
 
-        public String getEmail() {
+        public String getEmail()
+        {
             return email;
         }
 
-        public void setEmail(String email) {
+        public void setEmail(String email)
+        {
             this.email = email;
         }
     }
