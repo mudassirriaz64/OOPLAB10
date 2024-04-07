@@ -9,8 +9,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class AddressBook extends Application
-{
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class AddressBook extends Application {
+
+    private static final String FILE_PATH = "contacts.txt";
 
     TableView<Contact> tableView;
     ObservableList<Contact> contacts;
@@ -24,12 +29,10 @@ public class AddressBook extends Application
     Button deleteButton;
 
     @Override
-    public void start(Stage primaryStage)
-    {
-        // Initialize contacts list
+    public void start(Stage primaryStage) {
         contacts = FXCollections.observableArrayList();
+        loadContacts();
 
-        // Create form components
         nameField = new TextField();
         nameField.setPromptText("Name");
 
@@ -48,7 +51,6 @@ public class AddressBook extends Application
         deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> deleteContact());
 
-        // Create TableView
         tableView = new TableView<>();
         TableColumn<Contact, String> nameColumn = new TableColumn<>("Name");
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -59,72 +61,71 @@ public class AddressBook extends Application
         tableView.getColumns().addAll(nameColumn, phoneNumberColumn, emailColumn);
         tableView.setItems(contacts);
 
-        // Create layout
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.addRow(0, new Label("Name:"), nameField);
-        gridPane.addRow(1, new Label("Phone Number:"), phoneNumberField);
-        gridPane.addRow(2, new Label("Email:"), emailField);
-        gridPane.addRow(3, addButton, editButton, deleteButton);
-        gridPane.addRow(4, tableView);
+        // Set TableView width
+        tableView.setMinWidth(800);
+        tableView.setMaxWidth(800);
 
-        Scene scene = new Scene(gridPane, 600, 400);
+        GridPane gridPane = new GridPane();
+        gridPane.add(new Label("Name:"), 0, 0);
+        gridPane.add(nameField, 1, 0);
+        gridPane.add(new Label("Phone Number:"), 0, 1);
+        gridPane.add(phoneNumberField, 1, 1, 2, 1); // Spanning across two columns
+        gridPane.add(new Label("Email:"), 0, 2);
+        gridPane.add(emailField, 1, 2, 2, 1);
+        gridPane.add(addButton, 0, 3);
+        gridPane.add(editButton, 1, 3);
+        gridPane.add(deleteButton, 2, 3);
+        gridPane.add(tableView, 0, 4, 3, 1);
+        Scene scene = new Scene(gridPane, 800, 400);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Address Book");
         primaryStage.show();
     }
 
-    private void addContact()
-    {
+    private void addContact() {
         String name = nameField.getText();
         String phoneNumber = phoneNumberField.getText();
         String email = emailField.getText();
 
-        if (!name.isEmpty() && !phoneNumber.isEmpty() && !email.isEmpty())
-        {
+        if (!name.isEmpty() && !phoneNumber.isEmpty() && !email.isEmpty()) {
             Contact contact = new Contact(name, phoneNumber, email);
             contacts.add(contact);
+            saveContacts();
             clearFields();
-        } else
-        {
+        } else {
             showAlert("Error", "Please fill in all fields.");
         }
     }
 
-    private void editContact()
-    {
+    private void editContact() {
         Contact selectedContact = tableView.getSelectionModel().getSelectedItem();
         if (selectedContact != null) {
             String newName = nameField.getText();
             String newPhoneNumber = phoneNumberField.getText();
             String newEmail = emailField.getText();
 
-            if (!newName.isEmpty() && !newPhoneNumber.isEmpty() && !newEmail.isEmpty())
-            {
+            if (!newName.isEmpty() && !newPhoneNumber.isEmpty() && !newEmail.isEmpty()) {
                 selectedContact.setName(newName);
                 selectedContact.setPhoneNumber(newPhoneNumber);
                 selectedContact.setEmail(newEmail);
                 tableView.refresh();
+                saveContacts();
                 clearFields();
-            } else
-            {
+            } else {
                 showAlert("Error", "Please fill in all fields.");
             }
-        } else
-        {
+        } else {
             showAlert("Error", "No contact selected.");
         }
     }
 
-    private void deleteContact()
-    {
+    private void deleteContact() {
         Contact selectedContact = tableView.getSelectionModel().getSelectedItem();
         if (selectedContact != null) {
             contacts.remove(selectedContact);
+            saveContacts();
             clearFields();
-        } else
-        {
+        } else {
             showAlert("Error", "No contact selected.");
         }
     }
@@ -135,8 +136,7 @@ public class AddressBook extends Application
         emailField.clear();
     }
 
-    private void showAlert(String title, String message)
-    {
+    private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
@@ -144,51 +144,70 @@ public class AddressBook extends Application
         alert.showAndWait();
     }
 
-    public static void main(String[] args)
-    {
+    private void loadContacts() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String name = parts[0];
+                    String phoneNumber = parts[1];
+                    String email = parts[2];
+                    contacts.add(new Contact(name, phoneNumber, email));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void saveContacts() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Contact contact : contacts) {
+                writer.write(contact.getName() + "," + contact.getPhoneNumber() + "," + contact.getEmail());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
         launch(args);
     }
 
-    public static class Contact
-    {
+    public static class Contact {
         private String name;
         private String phoneNumber;
         private String email;
 
-        public Contact(String name, String phoneNumber, String email)
-        {
+        public Contact(String name, String phoneNumber, String email) {
             this.name = name;
             this.phoneNumber = phoneNumber;
             this.email = email;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public void setName(String name)
-        {
+        public void setName(String name) {
             this.name = name;
         }
 
-        public String getPhoneNumber()
-        {
+        public String getPhoneNumber() {
             return phoneNumber;
         }
 
-        public void setPhoneNumber(String phoneNumber)
-        {
+        public void setPhoneNumber(String phoneNumber) {
             this.phoneNumber = phoneNumber;
         }
 
-        public String getEmail()
-        {
+        public String getEmail() {
             return email;
         }
 
-        public void setEmail(String email)
-        {
+        public void setEmail(String email) {
             this.email = email;
         }
     }
